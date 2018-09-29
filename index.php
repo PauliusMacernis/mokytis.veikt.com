@@ -2,7 +2,6 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-
 echo '<!doctype html><html>
 <head>
     <meta charset="utf-8">
