@@ -21,36 +21,10 @@ class Test
         $this->testFile = $testFile;
     }
 
-    public function getTestHtml(): string
+    public function getQuestions(): array
     {
         $testFileContent = file_get_contents($this->getTestFile());
-        $testsArray = $this->extractTests($testFileContent);
-
-        if(empty($testsArray)) {
-            return '<h1>No questions under "' . $this->getTestFile() . '"</h1>';
-        }
-
-        $countQuestionsAvailable = count($testsArray);
-        $randQuestion = random_int(1, $countQuestionsAvailable);
-
-        $Parsedown = new \Parsedown();
-
-        return
-//            '<script>'
-////            . '$( "#showAnswer" ).click(function() {
-////                $( "#answer" ).toggle( "slow", function() {
-////                  // Animation complete.
-////                  alert("test");
-////                });
-////              });'
-//            . '</script>'
-            ''
-            . '<h1 title="' . htmlspecialchars($this->getTestFile(), ENT_QUOTES, mb_internal_encoding()) . '">Question #' . $randQuestion . '/' . $countQuestionsAvailable . ':</h1>'
-            . '<div>' . trim($Parsedown->text($testsArray[$randQuestion]['q'])) . '</div>'
-            . '<hr>'
-            . '<button id="showAnswer" onclick="$( \'#answer\' ).toggle();">Answer</button>'
-            . '<div id="answer" style="display: none;">' . trim($Parsedown->text($testsArray[$randQuestion]['a'])) . '</div>'
-        ;
+        return $this->extractTests($testFileContent);
     }
 
     private function extractTests(string $testFileContent): array
@@ -181,6 +155,18 @@ class Test
         // ```
 
         return $lineStripped !== false && mb_strpos($lineStripped, '```') === 0;
+    }
+
+    public function getQuestion(int $questionId)
+    {
+        $testFileContent = file_get_contents($this->getTestFile());
+        $questions = $this->extractTests($testFileContent);
+
+        if(!isset($questions[$questionId])) {
+            return [];
+        }
+
+        return $questions[$questionId];
     }
 
     private function isEmptyLine(string $line): bool
